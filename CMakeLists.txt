@@ -16,7 +16,7 @@ target_include_directories(sread PUBLIC sread/src)
 ## Packages
 find_package(Boost 1.69 COMPONENTS program_options REQUIRED)
 target_link_libraries(sread PUBLIC
-    ${BOOST_LIBRARIES}
+    ${Boost_LIBRARIES}
 )
 
 ## Testing
