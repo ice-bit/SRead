@@ -3,13 +3,7 @@
 
 using namespace boost::program_options;
 
-// Check that opt1 and opt2 aren't specified at the
-// same time
-void conflicting_options(const variables_map &vm, const char *opt1, const char *opt2) {
-    if(vm.count(opt1) && !vm[opt1].defaulted() && vm.count(opt2) && !vm[opt2].defaulted())
-        throw std::logic_error(std::string("Conflicting options '") + opt1 + "' and '" + opt2 + "'.");
-}
-
+/* Check if parameter requires another parameter */
 void option_dependency(const variables_map &vm, const char *for_what, const char *required_option) {
     if(vm.count(for_what) && !vm[for_what].defaulted())
         if(vm.count(required_option) == 0 || vm[required_option].defaulted())
@@ -24,7 +18,8 @@ void option_dependency(const variables_map &vm, const char *for_what, const char
      }
 
      try {
-         std::string name;
+         std::string port_name;
+         int baud_rate;
 
          options_description desc("Allowed options");
          desc.add_options()
@@ -34,10 +29,18 @@ void option_dependency(const variables_map &vm, const char *for_what, const char
           * Third one: the description
           */
          ("help,h", "Print the helper")
-         ("name,n", value(&name), "Specify your name");
+         ("read,r", value(&port_name), "Read from device/port")
+         ("write,w", value(&port_name), "Write to device/port")
+         ("baud,b", value(&baud_rate), "Specify baud rate");
 
          variables_map vm;
          store(parse_command_line(argc, argv, desc), vm);
+
+         /* Check if baud rate is specified when
+          * read/write operations are required.
+          */
+         option_dependency(vm, "read", "baud");
+         option_dependency(vm, "write", "baud");
 
          if(vm.count("help")) {
              std::cout << desc << std::endl;
