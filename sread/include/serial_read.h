@@ -1,12 +1,15 @@
 #ifndef SERIAL_READ_H
 #define SERIAL_READ_H
 
+#include <iostream>
 #include <string>
 #include <vector>
 
 /* Linux C headers */
 #include <termios.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 
 // Standard POSIX baud rates
 enum class PosixBaudRates {
@@ -22,17 +25,18 @@ enum class Status {
     OPEN
 };
 
-class serial_read {
+class serialRead {
 public:
-    serial_read(const std::string device_name, PosixBaudRates baud_rate, const unsigned int timeout, const bool echoMode);
-    int open_port(std::string port_name);
-    void configure_termios();
+    serialRead(const std::string device_name, PosixBaudRates baud_rate, const unsigned int timeout, const bool echoMode);
+    void open_port(std::string port_name);
     std::vector<char> read_from_port();
     void write_to_port(const std::string &data);
     void close_port(unsigned int port_number);
 
 private:
-    unsigned int port_number_descriptor;  // Result of open function
+    void configure_termios();
+    
+    int serial_port;  // Result of open function
     std::string device_name; // Device name
     PosixBaudRates baud_rate = PosixBaudRates::B_9600;
     int timeout = -1;
