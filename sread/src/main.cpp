@@ -37,7 +37,7 @@ void option_dependency(const variables_map &vm, const char *for_what, const char
          store(parse_command_line(argc, argv, desc), vm);
 
          /* Check if baud rate is specified when
-          * read/write operations are required.
+          * read/write operations are called.
           */
          option_dependency(vm, "read", "baud");
          option_dependency(vm, "write", "baud");
