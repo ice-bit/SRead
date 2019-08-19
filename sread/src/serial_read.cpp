@@ -1,10 +1,9 @@
 #include "../include/serial_read.h"
 
-serialRead::serialRead(const std::string device_name, PosixBaudRates baud_rate, const int timeout, const bool echoMode) {
+serialRead::serialRead(const std::string device_name, PosixBaudRates baud_rate, const bool echoMode) {
     this->device_name = device_name;
     this->baud_rate = baud_rate;
-    this->timeout = timeout;
-    this->echoMode = echoMode;
+    this->echoMode = echoMode; // Default false
 }
 
 void serialRead::open_port(std::string port_name) {
@@ -15,8 +14,8 @@ void serialRead::open_port(std::string port_name) {
     if(this->serial_port < 0)
         throw std::logic_error(std::string("Unable to open device '" + port_name + "', if the device actually exists, check user permissions."));
 
-
-    // TODO: call configure_termios()
+    // Configure tty
+    configure_termios();
 
     std::cout << "Device '" << port_name << "' opened successfully!" << std::endl;
     this->port_status = Status::OPENED;
@@ -28,8 +27,10 @@ void serialRead::configure_termios() {
     memset(&tty, 0, sizeof(tty));
 
     // Check for errors
-    if(tcgetattr(this->serial_port, &tty) != 0)
+    if(tcgetattr(this->serial_port, &tty) != 0) {
         std::cerr << "Error " << errno << " from tcgetattr: " << strerror(errno) << std::endl;
+        return;
+    }
 
     /* Configure c_cflag */
     tty.c_cflag &= ~PARENB; // Disable parity bit, since most serial communications don't use it
@@ -76,6 +77,75 @@ void serialRead::configure_termios() {
         tty.c_cc[VMIN] = 0;
     }
 
+    /* Configure Baud Rate */
+    switch(this->baud_rate) {
+        case PosixBaudRates::B_9600:
+            cfsetispeed(&tty, B9600);
+            cfsetospeed(&tty, B9600);
+            break;
+        case PosixBaudRates::B_38400:
+            cfsetispeed(&tty, B38400);
+            cfsetospeed(&tty, B38400);
+            break;
+        case PosixBaudRates::B_57600:
+            cfsetispeed(&tty, B57600);
+            cfsetospeed(&tty, B57600);
+            break;
+        case PosixBaudRates::B_115200:
+            cfsetispeed(&tty, B115200);
+            cfsetospeed(&tty, B115200);
+            break;
+        default:
+            throw std::logic_error(std::string("Baud rate not recognized"));
+    }
+
+    // Saving tty settings
+    if(tcsetattr(this->serial_port, TCSANOW, &tty) != 0)
+        std::cerr << "Error " << errno << " from tcsetattr: " << strerror(errno) << std::endl; 
+}
+
+void serialRead::write_to_port(const std::string &data) {
+    // Check if port is opened
+    if(this->port_status != Status::OPENED) {
+        std::cerr << "Unable to write into '" << this->device_name << "', device not opened!" << std::endl;
+        return;
+    }
     
+    // Write into port
+    if(write(this->serial_port, data.c_str(), sizeof(data)) == -1)
+        throw std::system_error(EFAULT, std::system_category());
+}
+
+void serialRead::read_from_port() {
+    // Check if port is opened
+    if(this->port_status != Status::OPENED || this->serial_port == 0) {
+        std::cerr << "Unable to read into '" << this->device_name << "', device not opened!" << std::endl;
+        return;
+    }
     
+    // Read from port
+    ssize_t status = read(this->serial_port, &readVec[0], 255);
+
+    // Check for errors
+    if(status < 0)
+        throw std::system_error(EFAULT, std::system_category());  
+}
+
+std::vector<char> serialRead::get_read_output() {
+    return this->readVec;
+}
+
+void serialRead::close_port() {
+    // Check if port is already closed
+    if(this->port_status == Status::CLOSED || this->serial_port == 0) {
+        std::cerr << "Port already closed!";
+        return;
+    }
+    // Try to close the port
+    auto status = close(this->serial_port);
+    // Check for errors
+    if(status != 0)
+        throw std::system_error(EFAULT, std::system_category());
+    // Otherwise set status to closed
+    this->port_status = Status::CLOSED;
 }

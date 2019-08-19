@@ -20,6 +20,7 @@ void option_dependency(const variables_map &vm, const char *for_what, const char
      try {
          std::string port_name;
          int baud_rate;
+         bool echo_mode;
 
          options_description desc("Allowed options");
          desc.add_options()
@@ -31,7 +32,8 @@ void option_dependency(const variables_map &vm, const char *for_what, const char
          ("help,h", "Print the helper")
          ("read,r", value(&port_name), "Read from device/port")
          ("write,w", value(&port_name), "Write to device/port")
-         ("baud,b", value(&baud_rate), "Specify baud rate");
+         ("baud,b", value(&baud_rate), "Specify baud rate")
+         ("echo,e", value(&echo_mode), "Enable/Disable echo mode");
 
          variables_map vm;
          store(parse_command_line(argc, argv, desc), vm);
@@ -40,7 +42,9 @@ void option_dependency(const variables_map &vm, const char *for_what, const char
           * read/write operations are called.
           */
          option_dependency(vm, "read", "baud");
+         option_dependency(vm, "read", "echo");
          option_dependency(vm, "write", "baud");
+         option_dependency(vm, "write", "echo");
 
          if(vm.count("help")) {
              std::cout << desc << std::endl;
