@@ -2,7 +2,7 @@
 #define SERIAL_READ_H
 
 #include <iostream>
-#include <string>
+#include <cstring>
 #include <vector>
 
 /* Linux C headers */
@@ -21,13 +21,13 @@ enum class PosixBaudRates {
 
 // Port Status
 enum class Status {
-    CLOSE,
-    OPEN
+    CLOSED,
+    OPENED
 };
 
 class serialRead {
 public:
-    serialRead(const std::string device_name, PosixBaudRates baud_rate, const unsigned int timeout, const bool echoMode);
+    serialRead(const std::string device_name, PosixBaudRates baud_rate, const int timeout, const bool echoMode);
     void open_port(std::string port_name);
     std::vector<char> read_from_port();
     void write_to_port(const std::string &data);
@@ -35,12 +35,13 @@ public:
 
 private:
     void configure_termios();
-    
+
     int serial_port;  // Result of open function
     std::string device_name; // Device name
     PosixBaudRates baud_rate = PosixBaudRates::B_9600;
     int timeout = -1;
     bool echoMode = false; // Enable/Disable echoing of input character
+    Status port_status = Status::CLOSED;
     std::vector<char> readVec;
 };
 
