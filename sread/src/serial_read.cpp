@@ -1,9 +1,10 @@
 #include "../include/serial_read.h"
 
-serialRead::serialRead(const std::string device_name, PosixBaudRates baud_rate, const bool echoMode) {
+serialRead::serialRead(const std::string device_name, int baud_rate, const bool echoMode) {
     this->device_name = device_name;
     this->baud_rate = baud_rate;
     this->echoMode = echoMode; // Default false
+    this->readVec.reserve(this->defaultReadVecSize); // Reserve n elements
 }
 
 void serialRead::open_port(std::string port_name) {
@@ -79,19 +80,19 @@ void serialRead::configure_termios() {
 
     /* Configure Baud Rate */
     switch(this->baud_rate) {
-        case PosixBaudRates::B_9600:
+        case 9600:
             cfsetispeed(&tty, B9600);
             cfsetospeed(&tty, B9600);
             break;
-        case PosixBaudRates::B_38400:
+        case 38400:
             cfsetispeed(&tty, B38400);
             cfsetospeed(&tty, B38400);
             break;
-        case PosixBaudRates::B_57600:
+        case 57600:
             cfsetispeed(&tty, B57600);
             cfsetospeed(&tty, B57600);
             break;
-        case PosixBaudRates::B_115200:
+        case 115200:
             cfsetispeed(&tty, B115200);
             cfsetospeed(&tty, B115200);
             break;
@@ -106,29 +107,31 @@ void serialRead::configure_termios() {
 
 void serialRead::write_to_port(const std::string &data) {
     // Check if port is opened
-    if(this->port_status != Status::OPENED) {
-        std::cerr << "Unable to write into '" << this->device_name << "', device not opened!" << std::endl;
-        return;
-    }
+    if(this->port_status != Status::OPENED || this->serial_port == 0)
+        open_port(this->device_name);
     
     // Write into port
     if(write(this->serial_port, data.c_str(), sizeof(data)) == -1)
         throw std::system_error(EFAULT, std::system_category());
+
+    // Close port
+    close_port();
 }
 
-void serialRead::read_from_port() {
-    // Check if port is opened
-    if(this->port_status != Status::OPENED || this->serial_port == 0) {
-        std::cerr << "Unable to read into '" << this->device_name << "', device not opened!" << std::endl;
-        return;
-    }
+std::string serialRead::read_from_port() {
+    // Open port if not opened
+    if(this->port_status != Status::OPENED || this->serial_port == 0)
+        open_port(this->device_name);
     
     // Read from port
-    ssize_t status = read(this->serial_port, &readVec[0], 255);
+    ssize_t status = read(this->serial_port, &this->readVec[0], this->defaultReadVecSize);
 
     // Check for errors
     if(status < 0)
-        throw std::system_error(EFAULT, std::system_category());  
+        throw std::system_error(EFAULT, std::system_category());
+    else if(status > 0)
+        return std::string(&readVec[0], status);
+    return std::string("");
 }
 
 std::vector<char> serialRead::get_read_output() {

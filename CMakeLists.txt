@@ -10,7 +10,7 @@ file(GLOB_RECURSE sources sread/src/*.cpp sread/include/*.h)
 add_executable(sread ${sources})
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-target_compile_options(sread PUBLIC -std=c++17 -Wall -Wextra -Werror)
+target_compile_options(sread PUBLIC -std=c++14 -Wall -Wextra -Werror)
 target_include_directories(sread PUBLIC sread/src)
 
 ## Packages
