@@ -24,6 +24,6 @@ target_link_libraries(sread PUBLIC
 ## Packaging
 install(TARGETS sread DESTINATION sread_destination)
 set(CPACK_PACKAGE_NAME "SerialRead")
-set(CPACK_PACKAGE_VERSION "0.0.1")
+set(CPACK_PACKAGE_VERSION "0.0.3")
 set(CPACK_MONOLITHIC_INSTALL 1)
 include(CPack)

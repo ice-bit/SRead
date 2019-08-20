@@ -97,7 +97,7 @@ void serialRead::configure_termios() {
             cfsetospeed(&tty, B115200);
             break;
         default:
-            throw std::logic_error(std::string("Baud rate not recognized"));
+            throw std::logic_error(std::string("Baud rate not supported"));
     }
 
     // Saving tty settings
@@ -111,11 +111,8 @@ void serialRead::write_to_port(const std::string &data) {
         open_port(this->device_name);
     
     // Write into port
-    if(write(this->serial_port, data.c_str(), sizeof(data)) == -1)
+    if(write(this->serial_port, data.c_str(), data.size()) == -1)
         throw std::system_error(EFAULT, std::system_category());
-
-    // Close port
-    close_port();
 }
 
 std::string serialRead::read_from_port() {
@@ -132,10 +129,6 @@ std::string serialRead::read_from_port() {
     else if(status > 0)
         return std::string(&readVec[0], status);
     return std::string("");
-}
-
-std::vector<char> serialRead::get_read_output() {
-    return this->readVec;
 }
 
 void serialRead::close_port() {

@@ -22,7 +22,6 @@ public:
     serialRead(const std::string device_name, int baud_rate, const bool echoMode);
     void write_to_port(const std::string &data);
     std::string read_from_port();
-    std::vector<char> get_read_output();
     void close_port();
 
 private:

@@ -28,6 +28,7 @@ void option_dependency(const variables_map &vm, const char *for_what, const char
          ("help,h", "Print the helper")
          ("read,r", value<std::string>(), "Read from device/port")
          ("write,w", value<std::string>(), "Write to device/port")
+         ("data,d", value<std::string>(), "Data to write to device/port")
          ("baud,b", value<int>(), "Specify baud rate")
          ("echo,e", value<bool>(), "Enable/Disable echo mode")
          ("about,a", "About this tool");
@@ -44,11 +45,15 @@ void option_dependency(const variables_map &vm, const char *for_what, const char
          option_dependency(vm, "read", "echo");
          option_dependency(vm, "write", "baud");
          option_dependency(vm, "write", "echo");
+         option_dependency(vm, "write", "data");
 
          if(vm.count("help")) {
-             std::cout << "SRead is a tool to read/write from/into serial ports under POSIX systems\n" << std::endl;
+             std::cout << "SRead is a tool to read/write from/into serial devices under POSIX systems\n" << std::endl;
              std::cout << desc << std::endl;
              return 0;
+         } else if(vm.count("about")) {
+            std::cout << "SRead is a tool to read/write from/into serial devices under POSIX systems\n Develop by Marco 'icebit' Cetica (c) 2019" << std::endl;
+            return 0;
          } else if(vm.count("read")) {
              // Retrieve arguments
             std::string read_port_name = vm["read"].as<std::string>();
@@ -69,8 +74,25 @@ void option_dependency(const variables_map &vm, const char *for_what, const char
             std::cout << "\nClosing port..." << std::endl;
             sr.close_port();
             std::cout << "Serial communication interrupted" << std::endl;
+         } else if(vm.count("write")) {
+            // Retrieve arguments
+            std::string write_port_name = vm["write"].as<std::string>();
+            int baud_rate = vm["baud"].as<int>();
+            bool echo_mode = vm["echo"].as<bool>();
+            std::string data = vm["data"].as<std::string>();
+            // Create a new object
+            serialRead sr(write_port_name, baud_rate, echo_mode);
+            // Write to port
+            sr.write_to_port(data);
+            // Close port
+            std::cout << "\nClosing port..." << std::endl;
+            sr.close_port();
+            std::cout << "Serial communication interrupted" << std::endl;
          } else if(vm.count("baud") || vm.count("echo"))
-             std::cerr << "This option must be used with --read/--write arguments." << std::endl;
+             std::cerr << "This option can only be used with --read/--write arguments." << std::endl;
+        else if(vm.count("data"))
+            std::cerr << "This option can only be used with --write argument." << std::endl;
+
      }
      catch(std::exception &e) {
          std::cerr << e.what() << std::endl;
