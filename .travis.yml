@@ -9,7 +9,7 @@ packages:
   - g++-7.4
 
 before_script:
-  - apt update && apt -y install libboost-all-dev
+  - sudo apt update && apt -y install libboost-all-dev
 
 script:
   - mkdir build && cd build
