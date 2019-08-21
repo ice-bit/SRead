@@ -10,7 +10,7 @@ void option_dependency(const variables_map &vm, const char *for_what, const char
         if(vm.count(required_option) == 0 || vm[required_option].defaulted())
             throw std::logic_error(std::string("Option '") + for_what  + "' requires option '" + required_option + "'.");
  }
-#ifndef UNIT_TESTS
+#ifndef UNITTEST
  int main(int argc, char *argv[]) {
      // Check if arguments were provided at all
      if(argc < 2) {

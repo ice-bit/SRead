@@ -15,33 +15,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Compiler flags
 target_compile_options(sread PUBLIC -std=c++14 -Wall -Wextra -Werror)
 # Inclue headers with angle brackets(<>) instead of " "
-target_include_directories(sread PUBLIC src/main src/serial_read)
+target_include_directories(sread PUBLIC src/main src/serial_read )
 # Retrieve Boost libraries
 find_package(Boost 1.69 COMPONENTS program_options REQUIRED)
 # Target libraries
 target_link_libraries(sread PUBLIC
     ${Boost_LIBRARIES}
 )
-
-### Testing
-# Find google test framework
-find_package(GTest)
-
-if(GTEST_FOUND)
-    add_executable(unit_tests ${sources_test} ${sources})
-    target_compile_definitions(unit_tests PUBLIC UNIT_TESTS)
-    set_target_properties(sread PROPERTIES ENABLE_EXPORTS ON)
-
-    target_link_libraries(unit_tests PUBLIC
-        ${GTEST_BOTH_LIBRARIES}
-        sread
-    )
-
-    target_include_directories(unit_tests PUBLIC
-        ${GTEST_INCLUDE_DIRS}
-    )
-endif()
-
 
 ### Packaging
 install(TARGETS sread DESTINATION SRead_destination)

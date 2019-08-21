@@ -7,7 +7,9 @@ dist: trusty
 packages:
   - cmake
   - g++-7.4
-  - gtest
+
+before_script:
+  - apt update && apt -y install libboost-all-dev
 
 script:
   - mkdir build && cd build
