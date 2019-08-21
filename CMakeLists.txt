@@ -17,7 +17,7 @@ target_compile_options(sread PUBLIC -std=c++14 -Wall -Wextra -Werror)
 # Inclue headers with angle brackets(<>) instead of " "
 target_include_directories(sread PUBLIC src/main src/serial_read )
 # Retrieve Boost libraries
-find_package(Boost 1.69 COMPONENTS program_options REQUIRED)
+find_package(Boost 1.54 COMPONENTS program_options REQUIRED)
 # Target libraries
 target_link_libraries(sread PUBLIC
     ${Boost_LIBRARIES}
