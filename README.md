@@ -1,4 +1,4 @@
-# SRead
+# SRead [![Build Status](https://travis-ci.com/ice-bit/SRead.svg?branch=master)](https://travis-ci.com/ice-bit/SRead)
 
 **S**erial**R**ead is a tool to read and write to serial ports under POSIX systems.  
 To fully understand how a serial port and serial communications works under POSIX systems, please refers to [this guide.](https://www.cmrr.umn.edu/~strupp/serial.html)
