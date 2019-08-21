@@ -1,4 +1,4 @@
-#include "../include/serial_read.h"
+#include <serial_read.h>
 
 serialRead::serialRead(const std::string device_name, int baud_rate, const bool echoMode) {
     this->device_name = device_name;
