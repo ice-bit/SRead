@@ -4,16 +4,7 @@
 To fully understand how a serial port and serial communications works under POSIX systems, please refers to [this guide.](https://www.cmrr.umn.edu/~strupp/serial.html)
 
 ## Installation
-Before compiling it be sure to install the following dependencies:  
-- C++14  
-- Boost libraries  
-- CMake
-
-```bash
-mkdir build
-cd build
-cmake .. && make
-```
+SRead is being refactored. Section not ready, yet.
 
 ## Usage
 1. Connect a device to your computer(e.g and Arduino) and retrieve his port name(e.g `/dev/ttyXXX`)  
