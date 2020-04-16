@@ -46,13 +46,6 @@ int main(int argc, char **argv) {
     char *data = NULL, *device_name = NULL;
 
     while((opt = getopt_long(argc, argv, short_opts, long_opts, NULL)) != -1) {
-        /* TODO:
-         * 1. Set baud rate to 9600 and echo mode to false (default values)
-         * 2. check if opposite opt flag is false
-         * 3. Set opt to choosen one
-         * 4. retrieve port/device
-         * 5. At the end of the switch if data buffer is empty print an error msg
-         * 6. If not call the appropriate function according to opt var. */
         switch (opt) {
         case 'r':
             if(write_opt) {
