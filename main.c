@@ -1,8 +1,13 @@
 #include <stdio.h>
-#include <getopt.h>
+#include <getopt.h> // for getopt_long
+#include <stdlib.h> // for atoi
+#include <ctype.h> // for isDigit
+#include <string.h> // for strcmp
 
 #define VERSION "0.2"
 #define AUTHOR "Marco 'icebit' Cetica"
+
+typedef enum {false, true} bool; // Define bool type
 
 void helper() {
     puts("SRead is a tool to read/write from/into serial ports under POSIX systems\n"
@@ -34,6 +39,12 @@ int main(int argc, char **argv) {
         {NULL, 0, NULL, 0}
     };
 
+    // Standard values
+    unsigned short baud_rate = 9600;
+    bool echo_mode = false;
+    bool read_opt = false, write_opt = false;
+    char *data = NULL, *device_name = NULL;
+
     while((opt = getopt_long(argc, argv, short_opts, long_opts, NULL)) != -1) {
         /* TODO:
          * 1. Set baud rate to 9600 and echo mode to false (default values)
@@ -42,8 +53,81 @@ int main(int argc, char **argv) {
          * 4. retrieve port/device
          * 5. At the end of the switch if data buffer is empty print an error msg
          * 6. If not call the appropriate function according to opt var. */
+        switch (opt) {
+        case 'r':
+            if(write_opt) {
+                puts("Error: only one operation at the time is supported");
+                return 1;
+            }
+            // Otherwise enable operation flag
+            read_opt = true;
+            // And retrieve device to read from
+            device_name = optarg;
+            break;
+
+        case 'w':
+            if(read_opt) {
+                puts("Error: only one operation at the time is supported");
+                return 1;
+            }
+            // Otherwise enable operation flag
+            write_opt = true;
+            // And retrieve device to write into
+            device_name = optarg;
+            break;
+        
+        case 'd':
+            data = optarg;
+            break;
+        
+        case 'b':
+            // Checking if arg is a number
+            if(isdigit(optarg) == 0) {
+                puts("Error: baud rate must be a number");
+                return 1;
+            }
+            baud_rate = atoi(optarg);
+            break;
+
+        case 'e':
+            if((strcmp(optarg, "true") == 0) || atoi(optarg) == 1)
+                echo_mode = true;
+            else if((strcmp(optarg, "false") == 0) || atoi(optarg) == 0)
+                echo_mode = false;
+            else {
+                puts("Error: use --echo with one of the following parameters: [true|false]");
+                return 1;
+            }
+            break;
+
+        case 'a':
+            puts("SRead is a tool to read/write from/into serial devices under POSIX systems\n Develop by Marco 'icebit' Cetica (c) 2019-2020");
+            break;
+        
+        case 'h':
+            helper();
+            return 0;
+
+        case ':':
+        case '?':
+        default:
+            break;
+        }
     }
 
+    // Check which operation user has choosen
+    if(read_opt == true) {
+        // Call read function
+        return 0;
+    } else if(write_opt == true) {
+        // First check if data buffer is set
+        if(data == NULL) {
+            puts("Error: specify data to write into device(--help for the helper)");
+            return 1;
+        }
+        // Call write function
+        return 0;
+    }
 
     return 0;
 }

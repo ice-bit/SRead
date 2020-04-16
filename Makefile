@@ -1,6 +1,6 @@
 TARGET = SRead
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -std=c11
 
 all: $(TARGET)
 
