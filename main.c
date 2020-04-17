@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
 
     // Check which operation user has choosen
     if(read_opt == true) {
-        // Call read function
+        // TODO: Call read function
         return 0;
     } else if(write_opt == true) {
         // First check if data buffer is set
@@ -118,7 +118,7 @@ int main(int argc, char **argv) {
             puts("Error: specify data to write into device(--help for the helper)");
             return 1;
         }
-        // Call write function
+        // TODO: Call write function
         return 0;
     }
 
