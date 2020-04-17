@@ -8,20 +8,22 @@
 #include <fcntl.h> // File control definitions
 #include <errno.h> // Error number costants
 
+typedef enum {false, true} bool; // Define bool type
+
 // Status enum
-enum Status {
+typedef enum {
     CLOSED,
     OPENED
-};
+}Status;
 
 // Internal functions
-static void open_port(const char *port_name);
-static void configure_termios();
+static void open_port(const char *port_name, bool echo_mode, unsigned short baud_rate);
+static void configure_termios(bool echo_mode, unsigned short baud_rate);
 int serial_port = NULL; // Result of the open function
 
 // Public APIs
-void write_to_port(const char* data);
-char *read_from_port();
-Status port_status = Status::CLOSED;
+void write_to_port(const char* data, bool echo_mode, unsigned short baud_rate);
+char *read_from_port(bool echo_mode, unsigned short baud_rate);
+Status port_status = CLOSED;
 
 #endif
