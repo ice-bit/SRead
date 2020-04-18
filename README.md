@@ -79,7 +79,6 @@ _output from `./sread -r /dev/ttyACM0 -b 9600 -e false`:_
 ```
 new message: hello world
 ```
-![gif](examples/example.gif)
 
 ## License
 [GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
