@@ -3,11 +3,7 @@
 #include <stdlib.h> // for atoi
 #include <ctype.h> // for isDigit
 #include <string.h> // for strcmp
-
-#define VERSION "0.2"
-#define AUTHOR "Marco 'icebit' Cetica"
-
-typedef enum {false, true} bool; // Define bool type
+#include "src/sread.h"
 
 void helper() {
     puts("SRead is a tool to read/write from/into serial ports under POSIX systems\n"
@@ -40,7 +36,7 @@ int main(int argc, char **argv) {
     };
 
     // Standard values
-    unsigned short baud_rate = 9600;
+    unsigned int baud_rate = 9600;
     bool echo_mode = false;
     bool read_opt = false, write_opt = false;
     char *data = NULL, *device_name = NULL;
@@ -74,11 +70,6 @@ int main(int argc, char **argv) {
             break;
         
         case 'b':
-            // Checking if arg is a number
-            if(isdigit(optarg) == 0) {
-                puts("Error: baud rate must be a number");
-                return 1;
-            }
             baud_rate = atoi(optarg);
             break;
 
@@ -110,7 +101,21 @@ int main(int argc, char **argv) {
 
     // Check which operation user has choosen
     if(read_opt == true) {
-        // TODO: Call read function
+        // Create output buffer
+        char buf[64];
+
+        // Open port and retrieve data
+        open_port(device_name, echo_mode, baud_rate);
+        read_from_port(buf, 64);
+
+        // keep reading until buffer is empty
+         do {
+            printf("%s", buf);
+            read_from_port(buf, 64);
+        } while(buf[0] != '\0');
+
+        // Close port
+        close_port();
         return 0;
     } else if(write_opt == true) {
         // First check if data buffer is set
@@ -118,8 +123,16 @@ int main(int argc, char **argv) {
             puts("Error: specify data to write into device(--help for the helper)");
             return 1;
         }
-        // TODO: Call write function
-        return 0;
+
+        // Open port
+        open_port(device_name, echo_mode, baud_rate);
+        // Write data to device
+        write_to_port(data, strlen(data));
+        // Last, close port
+        close_port(device_name);
+    } else {
+        puts("Error: use this option only with --read or --write.");
+        return 1;
     }
 
     return 0;

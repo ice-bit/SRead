@@ -1,6 +1,6 @@
 TARGET = SRead
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -std=c11
+CFLAGS = -Wall -Wextra -Werror -std=gnu11 # Otherwise CRTSCTS flags is undefined
 
 all: $(TARGET)
 
