@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
 
         case 'a':
             puts("SRead is a tool to read/write from/into serial devices under POSIX systems\n Develop by Marco 'icebit' Cetica (c) 2019-2020");
-            break;
+            return 0;
         
         case 'h':
             helper();
@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
         case ':':
         case '?':
         default:
-            break;
+            return 1;
         }
     }
 
