@@ -8,30 +8,26 @@ SRead is being refactored. Section not ready, yet.
 
 ## Usage
 1. Connect a device to your computer(e.g and Arduino) and retrieve his port name(e.g `/dev/ttyXXX`)  
-2. Read from serial port using: `./sread -r /dev/ttyACM0 -b 9600 -e false`  
-3. Write to serial port using: `./sread -w /dev/ttyACM0 -b 9600 -e false -d <string_to_write>`  
+2. Read from serial port using: `./sread -r /dev/ttyACM0 -b 9600`  
+3. Write to serial port using: `./sread -w /dev/ttyACM0 -b 9600 -d <string_to_write>`  
 
 ```
 SRead is a tool to read/write from/into serial ports under POSIX systems
-
-Allowed options:
-  -h [ --help ]         Print the helper
-  -r [ --read ] arg     Read from device/port
-  -w [ --write ] arg    Write to device/port
-  -d [ --data ] arg     Data to write to device/port
-  -b [ --baud ] arg     Specify baud rate
-  -e [ --echo ] arg     Enable/Disable echo mode
-  -a [ --about ]        About this tool
+-h, --help  | Print this helper
+-r, --read  | Read from specified device/port
+-w, --write | Write to specified device/port
+-d, --data  | Data to write to device/port
+-b, --baud  | Specify baud rate
+-a, --about | About this tool
 ```
 ## Baud rates
 SRead offers some common baud rates, however you cannot use a custom one, the following baud rates are supported:  
 - 9600  
 - 38400  
 - 57600  
-- 115200
-
-## Echo mode
-Echo mode can be enabled or disabled using the `--echo,-e` flag, however this should not change the behavior of the tool since [canonical mode](https://www.gnu.org/software/libc/manual/html_node/Canonical-or-Not.html) is always disabled.
+- 115200  
+- 230400  
+- 460800  
 
 ## Examples
 **read example using Arduino**  
@@ -50,7 +46,7 @@ void loop() {
     delay(500);
 }
 ```
-_output from `./sread -r /dev/ttyACM0 -b 9600 -e false`:_
+_output from `./sread -r /dev/ttyACM0 -b 9600`:_
 ```
 HIGH
 LOW
@@ -74,8 +70,8 @@ void loop() {
 }
 ```
 
-`./sread -w /dev/ttyACM0 -b 9600 -e false -d "hello world"`  
-_output from `./sread -r /dev/ttyACM0 -b 9600 -e false`:_  
+`./sread -w /dev/ttyACM0 -b 9600 -d "hello world"`  
+_output from `./sread -r /dev/ttyACM0 -b 9600`:_  
 ```
 new message: hello world
 ```
