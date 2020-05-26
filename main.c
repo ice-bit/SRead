@@ -5,6 +5,8 @@
 #include <string.h> // for strcmp
 #include "src/sread.h"
 
+// NOTE: bool type is defined in "src/sread.h"
+
 void helper() {
     puts("SRead is a tool to read/write from/into serial ports under POSIX systems\n"
          "-h, --help  | Print this helper\n"
@@ -12,7 +14,6 @@ void helper() {
          "-w, --write | Write to specified device/port\n"
          "-d, --data  | Data to write to device/port\n"
          "-b, --baud  | Specify baud rate\n"
-         "-e, --echo  | Enable or disable echo mode\n"
          "-a, --about | About this tool");
 }
 
@@ -23,13 +24,12 @@ int main(int argc, char **argv) {
     }
 
     int opt; // User choice
-    const char *short_opts = "r:w:d:b:e:ha"; // List of parameters. The colon means additional argument
+    const char *short_opts = "r:w:d:b:ha"; // List of parameters. The colon means additional argument
     struct option long_opts[] = {
         {"read", required_argument, NULL, 'r'},
         {"write", required_argument, NULL, 'w'},
         {"data", required_argument, NULL, 'd'},
         {"baud", required_argument, NULL, 'b'},
-        {"echo", required_argument, NULL, 'e'},
         {"help", no_argument, NULL, 'h'},
         {"about", no_argument, NULL, 'a'},
         {NULL, 0, NULL, 0}
@@ -37,7 +37,6 @@ int main(int argc, char **argv) {
 
     // Standard values
     unsigned int baud_rate = 9600;
-    bool echo_mode = false;
     bool read_opt = false, write_opt = false;
     char *data = NULL, *device_name = NULL;
 
@@ -73,17 +72,6 @@ int main(int argc, char **argv) {
             baud_rate = atoi(optarg);
             break;
 
-        case 'e':
-            if((strcmp(optarg, "true") == 0) || atoi(optarg) == 1)
-                echo_mode = true;
-            else if((strcmp(optarg, "false") == 0) || atoi(optarg) == 0)
-                echo_mode = false;
-            else {
-                puts("Error: use --echo with one of the following parameters: [true|false]");
-                return 1;
-            }
-            break;
-
         case 'a':
             puts("SRead is a tool to read/write from/into serial devices under POSIX systems\n Develop by Marco 'icebit' Cetica (c) 2019-2020");
             return 0;
@@ -105,7 +93,7 @@ int main(int argc, char **argv) {
         char buf[64];
 
         // Open port and retrieve data
-        open_port(device_name, echo_mode, baud_rate);
+        open_port(device_name, baud_rate);
         read_from_port(buf, 64);
 
         // keep reading until buffer is empty
@@ -125,7 +113,7 @@ int main(int argc, char **argv) {
         }
 
         // Open port
-        open_port(device_name, echo_mode, baud_rate);
+        open_port(device_name, baud_rate);
         // Write data to device
         write_to_port(data, strlen(data));
         // Last, close port

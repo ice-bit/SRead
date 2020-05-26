@@ -1,11 +1,11 @@
 #include "sread.h"
 
 // Internal functions
-static void configure_termios(bool echo_mode, unsigned int baud_rate);
+static void configure_termios(unsigned int baud_rate);
 static int serial_port = 0; // Result of the open function
 static Status port_status = CLOSED;
 
-void open_port(const char *port_name, bool echo_mode, unsigned int baud_rate) {
+void open_port(const char *port_name, unsigned int baud_rate) {
     // Check if port is already opened
     if(port_status == OPENED || serial_port != 0) {
         fprintf(stderr, "Port already opened\n");
@@ -22,7 +22,7 @@ void open_port(const char *port_name, bool echo_mode, unsigned int baud_rate) {
     }
 
     // Configure tty
-    configure_termios(echo_mode, baud_rate);
+    configure_termios(baud_rate);
 
     // Update port status
     port_status = OPENED;
@@ -48,7 +48,7 @@ void close_port() {
     serial_port = 0, port_status = CLOSED;
 }
 
-void configure_termios(bool echo_mode, unsigned int baud_rate) {
+void configure_termios(unsigned int baud_rate) {
     // Create a termios struct
     struct termios tty;
     memset(&tty, 0, sizeof(tty));
@@ -61,16 +61,14 @@ void configure_termios(bool echo_mode, unsigned int baud_rate) {
 
     // Configure c_cflags
     tty.c_cflag &= ~PARENB; // Disable parity bit, most serial communication doesn't use it anyway
-    tty.c_cflag &= ~CSTOPB; // USe only one stop bit 
+    tty.c_cflag &= ~CSTOPB; // Use only one stop bit 
     tty.c_cflag |= CS8; // Define 1 byte as 8 bits
     tty.c_cflag &= ~CRTSCTS; // Disable RTS/CTS hardware flow control(if available)
     tty.c_cflag |= CREAD | CLOCAL; // Enable read operations and ignore SIGHUP
 
     // Configure c_lflags
     tty.c_lflag &= ~ICANON; // Disable canonical mode(i.e. input is not line-oriented anymore)
-    echo_mode ? (tty.c_lflag |= ECHO) : (tty.c_cflag &= ~ECHO); // Enable or disable echo mode
-    tty.c_lflag &= ~ECHOE; // Disable erasure
-    tty.c_lflag &= ~ECHONL; // Disable new line on echo
+    tty.c_lflag &= ~(ECHO | ECHOE | ECHONL); // Disable echo mode, erasuer and new line on echo
     tty.c_lflag &= ~ISIG; // Disable INTR, QUIT, SUSP interpretation
 
     // Configure c_iflag (low level settings for input processing)
@@ -93,7 +91,7 @@ void configure_termios(bool echo_mode, unsigned int baud_rate) {
         In this case i want to read at least 10 symbols at the time */
 
     tty.c_cc[VTIME] = 0; // Wait indefinitely
-    tty.c_cc[VMIN] = 10; // Read at least 10 symbols
+    tty.c_cc[VMIN] = 2; // Read at least 2 symbols before printing
     
     // Configure baud rate
     switch (baud_rate) {
@@ -116,9 +114,20 @@ void configure_termios(bool echo_mode, unsigned int baud_rate) {
             cfsetispeed(&tty, B115200); // Set the input baud 
             cfsetospeed(&tty, B115200); // Set the output baud rate
             break;
-        
+
+        case 230400:
+            cfsetispeed(&tty, B230400); // Set the input baud 
+            cfsetospeed(&tty, B230400); // Set the output baud rate
+            break;
+
+        case 460800:
+            cfsetispeed(&tty, B460800); // Set the input baud 
+            cfsetospeed(&tty, B460800); // Set the output baud rate
+            break;
+ 
         default:
             fprintf(stderr, "Baud rate not supported or not a number.\n");
+            puts("Supported baud rates: [9600,38400,57600,115200,230400,460800]");
             exit(EXIT_FAILURE);
     }
 
