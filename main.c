@@ -5,8 +5,6 @@
 #include <string.h> // for strcmp
 #include "src/sread.h"
 
-// NOTE: bool type is defined in "src/sread.h"
-
 void helper() {
     puts("SRead is a tool to read/write from/into serial ports under POSIX systems\n"
          "-h, --help  | Print this helper\n"
@@ -37,7 +35,7 @@ int main(int argc, char **argv) {
 
     // Standard values
     unsigned int baud_rate = 9600;
-    bool read_opt = false, write_opt = false;
+    short read_opt = 0, write_opt = 0;
     char *data = NULL, *device_name = NULL;
 
     while((opt = getopt_long(argc, argv, short_opts, long_opts, NULL)) != -1) {
@@ -48,7 +46,7 @@ int main(int argc, char **argv) {
                 return 1;
             }
             // Otherwise enable operation flag
-            read_opt = true;
+            read_opt = 1;
             // And retrieve device to read from
             device_name = optarg;
             break;
@@ -59,7 +57,7 @@ int main(int argc, char **argv) {
                 return 1;
             }
             // Otherwise enable operation flag
-            write_opt = true;
+            write_opt = 1;
             // And retrieve device to write into
             device_name = optarg;
             break;
@@ -88,7 +86,7 @@ int main(int argc, char **argv) {
     }
 
     // Check which operation user has choosen
-    if(read_opt == true) {
+    if(read_opt == 1) {
         // Create output buffer
         char buf[64];
 
@@ -105,7 +103,7 @@ int main(int argc, char **argv) {
         // Close port
         close_port();
         return 0;
-    } else if(write_opt == true) {
+    } else if(write_opt == 1) {
         // First check if data buffer is set
         if(data == NULL) {
             puts("Error: specify data to write into device(--help for the helper)");

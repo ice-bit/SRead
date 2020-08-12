@@ -4,7 +4,7 @@
 To fully understand how a serial port and serial communications works under POSIX systems, please refers to [this guide.](https://www.cmrr.umn.edu/~strupp/serial.html)
 
 ## Installation
-SRead is being refactored. Section not ready, yet.
+To compile this tool just type `make clean all`. It will create a binary file called `sread` on your current directory.  
 
 ## Usage
 1. Connect a device to your computer(e.g and Arduino) and retrieve his port name(e.g `/dev/ttyXXX`)  

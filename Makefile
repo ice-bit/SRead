@@ -1,17 +1,14 @@
-TARGET = SRead
+TARGET = sread
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -std=gnu11 # Otherwise CRTSCTS flags is undefined
 
 all: $(TARGET)
 
-$(TARGET): main.o sread.a
+$(TARGET): main.o sread.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 
-main.o: main.c
+main.o: main.c sread.o
 	$(CC) $(CFLAGS) -c $< -o $@
-
-sread.a: sread.o
-	ar rcs $@ $^
 
 sread.o: src/sread.c src/sread.h
 	$(CC) $(CFLAGS) -c -o $@ $<
