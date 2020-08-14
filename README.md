@@ -4,7 +4,13 @@
 To fully understand how a serial port and serial communications works under POSIX systems, please refers to [this guide.](https://www.cmrr.umn.edu/~strupp/serial.html)
 
 ## Installation
-To compile this tool just type `make clean all`. It will create a binary file called `sread` on your current directory.  
+In order to install sread install GCC compiler and all the standard build utilities, then run the following:  
+- `aclocal`  
+- `autoconf`  
+- `automake --add-missing`  
+- `./configure && make`  
+
+A binary file called `sread` will be created under `src`.
 
 ## Usage
 1. Connect a device to your computer(e.g and Arduino) and retrieve his port name(e.g `/dev/ttyXXX`)  
