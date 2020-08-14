@@ -1,3 +1,3 @@
-bin_PROGRAMS = main
-main_SOURCES = main.c
-main_LDADD = ../include/libsread.a
+bin_PROGRAMS = sread
+sread_SOURCES = main.c
+sread_LDADD = ../include/libsread.a

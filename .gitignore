@@ -12,3 +12,11 @@ missing
 
 autom4te.cache/
 Makefile.in
+Makefile
+config.log
+config.status
+
+*.a
+*.o
+sread
+install-sh
