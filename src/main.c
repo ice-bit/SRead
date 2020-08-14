@@ -3,7 +3,7 @@
 #include <stdlib.h> // for atoi
 #include <ctype.h> // for isDigit
 #include <string.h> // for strcmp
-#include "sread.h"
+#include "../include/sread.h"
 
 void helper() {
     puts("SRead is a tool to read/write from/into serial ports under POSIX systems\n"

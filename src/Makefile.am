@@ -1,3 +1,3 @@
-CFLAGS="-Wall -Wextra -Werror -std=c11 -lm"
-bin_PROGRAMS=sread
-sread_SOURCES=main.c sread.c sread.h
+bin_PROGRAMS = main
+main_SOURCES = main.c
+main_LDADD = ../include/libsread.a

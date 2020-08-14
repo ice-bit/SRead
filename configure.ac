@@ -2,13 +2,12 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([hello], [0.3])
-AC_CONFIG_SRCDIR([src])
+AC_INIT([sread], [0.3])
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR([src/sread.h])
-#AC_CONFIG_HEADERS([config.h])
+AC_PROG_RANLIB
 
 # Checks for programs.
+AC_LANG(C)
 AC_PROG_CC
 
 # Checks for libraries.
@@ -22,6 +21,5 @@ AC_TYPE_SSIZE_T
 
 # Checks for library functions.
 AC_CHECK_FUNCS([memset strerror])
-
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile include/Makefile src/Makefile])
 AC_OUTPUT
