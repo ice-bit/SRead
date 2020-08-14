@@ -4,7 +4,7 @@
 To fully understand how a serial port and serial communications works under POSIX systems, please refers to [this guide.](https://www.cmrr.umn.edu/~strupp/serial.html)
 
 ## Installation
-In order to install sread install GCC compiler and all the standard build utilities, then run the following:  
+In order to build this tool, first install GCC compiler and all the standard build utilities, then run the following:  
 - `aclocal`  
 - `autoconf`  
 - `automake --add-missing`  
