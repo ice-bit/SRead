@@ -8,3 +8,4 @@ script:
   - autoconf
   - automake --add-missing
   - ./configure && make
+  - src/sread -a
